@@ -1,11 +1,7 @@
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -13,7 +9,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
@@ -96,6 +91,20 @@ public class Driver extends JFrame {
 		}
 	}
 	
+	private static boolean canRun(String option) {
+		boolean retval = true;
+		//try to setup the networking of the selected socket
+		switch(option) {
+		case "server": System.out.println("Trying to setup server socket...");
+		   			   break;
+
+		case "client": System.out.println("Trying to setup client socket...");
+		   			   break;
+		}
+		
+		return retval;
+	}
+	
 	private static String getSelectedOption() {
 		String retval = "error";
 		// check state
@@ -113,22 +122,18 @@ public class Driver extends JFrame {
 	@SuppressWarnings("serial")
 	private static void initButtons() {
 		ok = new JButton(new AbstractAction("OK"){
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				runInstance();
 			}
-			
 		});
 		close = new JButton(new AbstractAction("Close"){
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				frame.dispose();
 			}
-			
 		});
 	}
 	

@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class ChatServer {
+public class ChatServer implements SocketSetup {
 
     private static final int PACKET_SIZE = 512;
     private List<Client> clients = new ArrayList<Client>();
@@ -135,4 +135,10 @@ public class ChatServer {
 		response+="</users>";
 		sendMessageToAll(response);
     }
+
+	@Override
+	public boolean setupSocket() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -5,7 +5,7 @@ import java.io.*;
 import java.awt.*;
 import java.util.concurrent.*;
 
-public class ChatClient extends JFrame {
+public class ChatClient extends JFrame implements SocketSetup {
     
     private static final int PACKET_SIZE = 512;
     private DatagramPacket receivedPacket;
@@ -165,4 +165,10 @@ public class ChatClient extends JFrame {
     	else
     		output.append(xml+"\n");
     }
+
+	@Override
+	public boolean setupSocket() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
