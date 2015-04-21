@@ -2,25 +2,25 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
 
-public class Driver extends JFrame{
+public class Driver extends JFrame {
 
-	/**
-	 * @param args
-	 */
-	
 	static JFrame frame;
 	static JPanel panel;
 	static JPanel bottom;
@@ -35,7 +35,6 @@ public class Driver extends JFrame{
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		init();
-		
 	}
 	
 	private static void init() {
@@ -55,8 +54,7 @@ public class Driver extends JFrame{
 		question = new JLabel("Please select one of the following options:");
 		server = new JRadioButton("Server instance");
 		client = new JRadioButton("Client instance");
-		ok = new JButton("OK");
-		close = new JButton("Close");
+		initButtons(); //initialize the buttons
 		
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(server);
@@ -80,26 +78,58 @@ public class Driver extends JFrame{
 		panel.add(bottom);
 		frame.getContentPane().add(panel); // add to a container
 		server.setSelected(true); // set state
-		ok.setMnemonic(KeyEvent.VK_N);
 		displayWindow();
 	}
 	
-	private int getSelectedOption() {
-		int retval = -1;
+	private static void runInstance() {
+		// depending on the selected option, do the following
+		switch(getSelectedOption()) {
+		case "server": System.out.println("Running server instance...");
+					   break;
+			
+		case "client": System.out.println("Running client instance...");
+					   break;
+		
+		case "error": System.out.println("Something went wrong!...");
+					  System.exit(0); //closing app due to error with radiobuttons 
+					  break;
+		}
+	}
+	
+	private static String getSelectedOption() {
+		String retval = "error";
 		// check state
 		if (server.isSelected()) {
-		 
 		    // do something...
-		 
+			retval = "server";
 		} else {
-		 
 		    // do something else...
-		 
+			retval = "client";
 		}
 
-		
-		
 		return retval;
+	}
+	
+	@SuppressWarnings("serial")
+	private static void initButtons() {
+		ok = new JButton(new AbstractAction("OK"){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				runInstance();
+			}
+			
+		});
+		close = new JButton(new AbstractAction("Close"){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				frame.dispose();
+			}
+			
+		});
 	}
 	
 	private static void displayWindow() { 
@@ -108,5 +138,6 @@ public class Driver extends JFrame{
 		frame.pack();
 		frame.setVisible(true);
 	}
+
 
 }
