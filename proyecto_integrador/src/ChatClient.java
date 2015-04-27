@@ -31,11 +31,7 @@ public class ChatClient extends JFrame implements SocketSetup {
         // First, set up the desired Swing interface.
         JPanel topPanel = new JPanel();        
         JButton quit = new JButton("Salir");
-        topPanel.add(quit);
-        JButton users = new JButton("Ver usuarios conectados");
-        //topPanel.add(users);
         connectedUsers = new JLabel("Usuarios conectados");
-       // topPanel.add(connectedUsers);
         JLabel j = new JLabel("Para: ");
         topPanel.add(j);
         to = new JTextField(40);
@@ -52,6 +48,7 @@ public class ChatClient extends JFrame implements SocketSetup {
         sb.setPreferredSize(new Dimension(500,300));
         this.add(sb, BorderLayout.CENTER);
         this.add(connectedUsers, BorderLayout.SOUTH);
+        topPanel.add(quit);
         this.setTitle("Chat for " + nick);
         this.pack();
         this.setVisible(true);
@@ -90,12 +87,7 @@ public class ChatClient extends JFrame implements SocketSetup {
                 ChatClient.this.finalize();
             }
         });
-        
-        users.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                sendMessage("<getConnectedUsers>"+nick+"<getConnectedUsers>");
-            }
-        });
+     
         
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
@@ -154,7 +146,7 @@ public class ChatClient extends JFrame implements SocketSetup {
     	if(xml.startsWith("<users"))
     	{
 	    	String[] parts = xml.split(">");
-	    	String[] temp;
+	    	String[] temp;	
 	    	if(parts[0].equals("<users")){
 	    		temp = parts[1].split("<");
 	    		String users = temp[0];
