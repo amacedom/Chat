@@ -2,6 +2,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -12,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
+
+import ui.UserInterface;
 
 
 public class Driver extends JFrame {
@@ -29,7 +32,8 @@ public class Driver extends JFrame {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		init();
+		new UserInterface().createWindow();
+		//init();
 	}
 	
 	private static void init() {
