@@ -39,6 +39,8 @@ public class UserInterface extends JFrame {
 	JMenuBar menuBar;
 	JMenu menu, submenu;
 	JMenuItem users,sendFile,quit;
+	
+	String [] test  = {"All Users"};//remove this line
 
 	// The constructor to build the user interface of the client
 	public void createWindow() {
@@ -59,7 +61,7 @@ public class UserInterface extends JFrame {
 		this.top.add(this.onlineUsers);
 		this.to = new JLabel("To: ");
 		this.top.add(to);
-		this.userList = new JComboBox();
+		this.userList = new JComboBox(test);
 		this.top.add(userList);
 		this.top.add(Box.createRigidArea(new Dimension(10, 0)));
 	
@@ -82,13 +84,14 @@ public class UserInterface extends JFrame {
 		this.message = new JLabel("Message:");
 		this.bottom.add(message);
 		this.outgoing = new JTextField();
-		this.outgoing.setPreferredSize(new Dimension(420,50));
+		this.outgoing.setPreferredSize(new Dimension(420,30));
+		this.outgoing.requestFocus();
 		this.bottom.add(outgoing);
-		this.bottom.add(Box.createRigidArea(new Dimension(5, 0)));
+		this.bottom.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.tweetit = new JLabel("Tweet:");
 		this.bottom.add(tweetit);
 		this.tweetField = new JTextField();
-		this.tweetField.setPreferredSize(new Dimension(360,25));
+		this.tweetField.setPreferredSize(new Dimension(365,25));
 		this.bottom.add(tweetField);
 		this.tweet = new JButton();
 		this.tweet.setIcon(new ImageIcon(getImage()));
