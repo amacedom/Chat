@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
+import ui.AuthInterface;
+import ui.RegisterInterface;
 import ui.UserInterface;
 
 
@@ -32,7 +34,9 @@ public class Driver extends JFrame {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		new UserInterface().createWindow();
+		//new UserInterface().createWindow();
+		//new AuthInterface().createWindow();
+		new RegisterInterface().createWindow();
 		//init();
 	}
 	
