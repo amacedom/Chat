@@ -23,7 +23,7 @@ public class RegisterInterface extends JFrame{
 	JTextField username,email,twitter;
 	JPasswordField password;
 	JLabel user,pass,mail,twitt; 
-	JButton create,cancel;
+	public JButton create,cancel;
 	Dimension dim;
 	
 	public void createWindow () {

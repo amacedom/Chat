@@ -18,7 +18,7 @@ public class MySQL {
 	String password;
 	Connection conn;
 	
-	PreparedStatement userExist,createUser;
+	PreparedStatement userExist,createUser,connect,disconn,passMatch;
 	
 	public MySQL() {
 		this.url = "jdbc:mysql://localhost:3306/"; 
@@ -33,8 +33,6 @@ public class MySQL {
 		try { 
 			Class.forName(driver).newInstance(); 
 			conn = DriverManager.getConnection(url+dbName,userName,password);
-			new AuthInterface().createWindow();
-			//conn.close(); 
 		} catch (Exception e) { 
 			e.printStackTrace(); 
 		} 
@@ -42,12 +40,48 @@ public class MySQL {
 		return conn;
 	}
 	
-	public void login() {
+	public boolean passwordMatches(String username, String password) {
+		String query = "select count(*) from " + dbName + ".chat_users where username = ? and password = ? ";
+		boolean retval = false;
+		int count = 0;
+		try {
+			this.passMatch = (PreparedStatement) conn.prepareStatement(query);
+			passMatch.setString(1, username);
+			passMatch.setString(2, password);
+			ResultSet rs = passMatch.executeQuery();
+			if(rs.next()) 
+				count = rs.getInt(1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
+		if(count >= 1)
+			retval = true;
+		
+		return retval;
 	}
 	
-	public void logout() {
-		
+	public void login(String username) {
+		String query = "update " + dbName + ".chat_users set status='online' where username = ?";
+		try { 
+			this.connect = (PreparedStatement) conn.prepareStatement(query);
+			connect.setString(1, username);
+			connect.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void logout(String username) {
+		String query = "update " + dbName + ".chat_users set status='offline' where username = ?";
+		try { 
+			this.connect = (PreparedStatement) conn.prepareStatement(query);
+			connect.setString(1, username);
+			connect.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean userExists(String username) {

@@ -26,7 +26,7 @@ public class AuthInterface extends JFrame {
 	JTextField username;
 	JPasswordField password;
 	JLabel email,pass,newAccount; 
-	JButton login,create;
+	public JButton login,create;
 	Dimension dim;
 	
 	public void createWindow () {

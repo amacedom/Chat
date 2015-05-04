@@ -1,3 +1,4 @@
+package bin;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -39,12 +40,7 @@ public class Driver extends JFrame {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
 		MySQL mydb = new MySQL();
-		mydb.connectToMySQL();
-		if(!mydb.userExists("july"))
-		{
-			System.out.println("do NOT exist");
-			mydb.createNewUser("july", "singler345", "july@live.com","july90");
-		}
+
 		mydb.closeConn();
 		
 		//init();

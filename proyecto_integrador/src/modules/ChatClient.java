@@ -1,4 +1,8 @@
+package modules;
+import interfaces.SocketSetup;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.net.*;
 import java.io.*;
