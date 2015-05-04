@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -61,6 +63,16 @@ public class AuthInterface extends JFrame {
 		this.buttons.add(login);
 		this.buttons.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.buttons.add(create);
+		
+		create.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				new RegisterInterface().createWindow();
+			}
+			
+		});
 		
 	}
 	

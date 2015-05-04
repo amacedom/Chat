@@ -17,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 import ui.AuthInterface;
 import ui.RegisterInterface;
 import ui.UserInterface;
-
+import java.sql.*;
 
 public class Driver extends JFrame {
 
@@ -32,12 +32,33 @@ public class Driver extends JFrame {
 	static ButtonGroup buttonGroup;
 	static Dimension dim;
 	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
-		//new AuthInterface().createWindow();
-		new RegisterInterface().createWindow();
+		new AuthInterface().createWindow();
+		Connection mysql = connectMySQL();
+		
 		//init();
+	}
+	
+	private static Connection connectMySQL() {
+		String url = "jdbc:mysql://www.mdserver01.com:3306/"; 
+		String dbName = "armandm_distribuidos";
+		String driver = "com.mysql.jdbc.Driver"; 
+		String userName = "armandm_admin"; 
+		String password = "admin4us"; 	
+		Connection conn = null; 
+		
+		try { 
+			Class.forName(driver).newInstance(); 
+			conn = DriverManager.getConnection(url+dbName,userName,password); 
+			conn.close(); 
+		} catch (Exception e) { 
+			e.printStackTrace(); 
+		} 
+
+		return conn;
 	}
 	
 	private static void init() {
@@ -57,6 +78,7 @@ public class Driver extends JFrame {
 		question = new JLabel("Please select one of the following options:");
 		server = new JRadioButton("Server instance");
 		client = new JRadioButton("Client instance");
+		
 		initButtons(); //initialize the buttons
 		
 		buttonGroup = new ButtonGroup();

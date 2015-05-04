@@ -3,6 +3,8 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -27,8 +29,8 @@ public class RegisterInterface extends JFrame{
 	public void createWindow () {
 		this.dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.frame = new JFrame();
-		this.frame.setTitle("Registrarion Window");
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.frame.setTitle("Registration Window");
+		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.frame.setLocation((dim.width/2)-250, (dim.height/2)-200);
 		this.frame.setResizable(false);
 		
@@ -59,6 +61,14 @@ public class RegisterInterface extends JFrame{
 		this.buttons.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.buttons.add(cancel);
 		
+		//set the action listeners
+		cancel.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				frame.dispose();
+			}
+			
+		});
 	}
 	
 	private void setLoginFields() {
