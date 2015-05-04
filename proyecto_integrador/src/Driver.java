@@ -14,9 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
+import db.MySQL;
 import ui.AuthInterface;
 import ui.RegisterInterface;
 import ui.UserInterface;
+
 import java.sql.*;
 
 public class Driver extends JFrame {
@@ -36,29 +38,16 @@ public class Driver extends JFrame {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
-		new AuthInterface().createWindow();
-		Connection mysql = connectMySQL();
+		MySQL mydb = new MySQL();
+		mydb.connectToMySQL();
+		if(!mydb.userExists("july"))
+		{
+			System.out.println("do NOT exist");
+			mydb.createNewUser("july", "singler345", "july@live.com","july90");
+		}
+		mydb.closeConn();
 		
 		//init();
-	}
-	
-	private static Connection connectMySQL() {
-		String url = "jdbc:mysql://www.mdserver01.com:3306/"; 
-		String dbName = "armandm_distribuidos";
-		String driver = "com.mysql.jdbc.Driver"; 
-		String userName = "armandm_admin"; 
-		String password = "admin4us"; 	
-		Connection conn = null; 
-		
-		try { 
-			Class.forName(driver).newInstance(); 
-			conn = DriverManager.getConnection(url+dbName,userName,password); 
-			conn.close(); 
-		} catch (Exception e) { 
-			e.printStackTrace(); 
-		} 
-
-		return conn;
 	}
 	
 	private static void init() {
