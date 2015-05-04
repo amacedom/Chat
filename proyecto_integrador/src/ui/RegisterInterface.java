@@ -11,10 +11,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+
+import db.MySQL;
 
 public class RegisterInterface extends JFrame{
 	
@@ -25,6 +28,14 @@ public class RegisterInterface extends JFrame{
 	JLabel user,pass,mail,twitt; 
 	public JButton create,cancel;
 	Dimension dim;
+	MySQL mydb;
+	
+	
+	public RegisterInterface(MySQL mydb) {
+		this.mydb = mydb;
+		createWindow();
+	}
+	
 	
 	public void createWindow () {
 		this.dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -68,6 +79,26 @@ public class RegisterInterface extends JFrame{
 				frame.dispose();
 			}
 			
+		});
+		
+		create.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				String user = username.getText();
+				//String pass = password.getPassword().toString();
+				String pass = password.getText();
+				String mail = email.getText();
+				String tUser = twitter.getText();
+				System.out.println(pass);
+				if(!mydb.userExists(user)){
+					mydb.createNewUser(user, pass, mail, tUser);
+					frame.dispose();
+				}
+				else {
+					JOptionPane.showMessageDialog(form, "Username already exists :(","Error",JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		});
 	}
 	

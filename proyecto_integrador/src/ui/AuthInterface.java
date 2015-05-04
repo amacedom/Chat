@@ -14,10 +14,15 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+
+import bin.Driver;
+import db.MySQL;
+import db.User;
 
 public class AuthInterface extends JFrame {
 	
@@ -28,6 +33,12 @@ public class AuthInterface extends JFrame {
 	JLabel email,pass,newAccount; 
 	public JButton login,create;
 	Dimension dim;
+	MySQL mydb;
+	
+	public AuthInterface( MySQL mydb) {
+		this.mydb = mydb;
+		createWindow();
+	}
 	
 	public void createWindow () {
 		this.dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -69,7 +80,29 @@ public class AuthInterface extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				new RegisterInterface().createWindow();
+				RegisterInterface re = new RegisterInterface(mydb);
+			}
+			
+		});
+		
+		login.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String user = username.getText();
+				String pass = password.getText(); 
+				//String pass = encryptPassword(pass);
+				if(mydb.passwordMatches(user, pass)) {
+					mydb.login(user);
+					User userDB = mydb.getUserData(user);
+					mydb.closeConn();
+					frame.dispose();
+					new Driver().init(userDB);
+				}
+				else {
+					JOptionPane.showMessageDialog(form, "Username or Password are incorrect","Error",JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			
 		});

@@ -8,6 +8,7 @@ public class Client {
 	public String nick; // Client's chosen nickname
     public DatagramPacket clientPacket; // Client contact info
     public DatagramSocket serverSocket; // Server Socket
+   
 
     public void sendMessage(String message) {
         try {

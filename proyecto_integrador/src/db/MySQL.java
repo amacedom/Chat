@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 import com.mysql.jdbc.PreparedStatement;
 
 import ui.AuthInterface;
@@ -18,7 +20,7 @@ public class MySQL {
 	String password;
 	Connection conn;
 	
-	PreparedStatement userExist,createUser,connect,disconn,passMatch;
+	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser;
 	
 	public MySQL() {
 		this.url = "jdbc:mysql://localhost:3306/"; 
@@ -108,20 +110,43 @@ public class MySQL {
 	
 	public void createNewUser(String username, String password, String email, String twitter_username) {
 		String query = "insert into distribuidos.chat_users (id,username,password,email,twitter_username,status, last_login) values (default,?,?,?,?,'offline', null)"; 
-		try {
-			this.createUser = (PreparedStatement) conn.prepareStatement(query);
-			createUser.setString(1, username);
-			createUser.setString(2, password);
-			createUser.setString(3, email);
-			createUser.setString(4, twitter_username);
-		
-			createUser.execute();
+		if(username.length() >= 4) {
+			try {
+				this.createUser = (PreparedStatement) conn.prepareStatement(query);
+				createUser.setString(1, username);
+				createUser.setString(2, password);
+				createUser.setString(3, email);
+				createUser.setString(4, twitter_username);
+				createUser.execute();
 			
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else{
+			JOptionPane.showMessageDialog(null, "Username must be 4 characters long","Error",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public User getUserData(String username) {
+		String query = "select id,username,password,email,twitter_username,status from " + dbName + ".chat_users where username = ?";
+		User user;
+		try {
+			this.getUser = (PreparedStatement) conn.prepareStatement(query);
+			getUser.setString(1, username);
+			ResultSet rs = getUser.executeQuery();
+			MySQL mysql = new MySQL();
+			while(rs.next()) {
+				user = new User(rs.getInt("id"),rs.getString("username"),rs.getString("password"),
+						rs.getString("email"),rs.getString("twitter_username"),rs.getString("status"),mysql);
+			}
+		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		return null;
 	}
 	
 	public void closeConn() {

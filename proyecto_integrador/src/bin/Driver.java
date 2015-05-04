@@ -16,6 +16,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
 import db.MySQL;
+import db.User;
 import ui.AuthInterface;
 import ui.RegisterInterface;
 import ui.UserInterface;
@@ -40,13 +41,11 @@ public class Driver extends JFrame {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
 		MySQL mydb = new MySQL();
-
-		mydb.closeConn();
-		
-		//init();
+		AuthInterface au = new AuthInterface(mydb);
+		//mydb.closeConn();
 	}
 	
-	private static void init() {
+	public void init(User userDB) {
 		// create instances
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		
@@ -154,7 +153,8 @@ public class Driver extends JFrame {
 	
 	private static void displayWindow() { 
 		// show the window
-		frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
+		frame.setLocation((dim.width/2)-250, (dim.height/2)-200);
+		//frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
 		frame.pack();
 		frame.setVisible(true);
 	}
