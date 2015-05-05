@@ -35,13 +35,13 @@ public class ChatClient extends UserInterface implements SocketSetup {
     public ChatClient(User userDB) {
     	super();
     	super.createWindow(userDB.getUsername());
+    	new WeatherService();
     	this.frame = super.frame;
     	this.tweet = super.tweet;
     	this.userDB = userDB;
     	this.userList = super.userList;
     	this.tweetField = super.tweetField;
     	updateUserList();
-  
   
     	tweet.addActionListener(new ActionListener(){
 			@Override
@@ -73,11 +73,8 @@ public class ChatClient extends UserInterface implements SocketSetup {
 						e1.printStackTrace();
 					}
 				}
-				
-				
 			}
     	});
-    	
     }
    
     @Override
@@ -161,7 +158,6 @@ public class ChatClient extends UserInterface implements SocketSetup {
             e.printStackTrace();
         }
     }
-    
     
     public void updateUserList() {
     	for(String str: this.userDB.getDBConn().getAllUsers(this.userDB.getUsername())) {

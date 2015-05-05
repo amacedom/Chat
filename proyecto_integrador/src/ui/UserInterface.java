@@ -28,11 +28,11 @@ import javax.swing.JTextField;
 public class UserInterface extends JFrame {
 	// Elements of the user interface
 	protected JFrame frame;
-	protected JPanel top,mid,bottom;
+	protected JPanel top,mid,bottom,weather;
 	JTextArea incoming;
 	protected JTextField outgoing,tweetField;
 	JScrollPane scroll;
-	JLabel onlineUsers,to,message,tweetit; 
+	protected JLabel onlineUsers,to,message,tweetit,weatherText,timeText; 
 	protected JComboBox userList;
 	protected JButton tweet;
 	Dimension dim;
@@ -81,6 +81,7 @@ public class UserInterface extends JFrame {
 		this.bottom = new JPanel();
 		this.bottom.setPreferredSize(new Dimension(500,100));
 		this.bottom.setLayout(new FlowLayout());
+		this.bottom.add(Box.createRigidArea(new Dimension(1, 0)));
 		this.message = new JLabel("Message:");
 		this.bottom.add(message);
 		this.outgoing = new JTextField();
@@ -97,12 +98,28 @@ public class UserInterface extends JFrame {
 		this.tweet.setIcon(new ImageIcon(getImage()));
 		this.bottom.add(tweet);
 		
+		// init the weather part
+		this.weather = new JPanel();
+		this.weather.setPreferredSize(new Dimension(500,25));
+		this.weather.setLayout(new BoxLayout(weather,BoxLayout.X_AXIS));
+		this.weatherText = new JLabel("Weather goes here!");
+		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
+		this.weather.add(weatherText,BorderLayout.LINE_START);
+		this.timeText = new JLabel("hh:mm:ss");
+		this.weather.add(Box.createRigidArea(new Dimension(310, 0)));
+		this.weather.add(timeText,BorderLayout.LINE_END);
+		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
+		
+		
+
+		
 		// init menu options
 		initMenu();
 		
-		this.frame.add(this.top,BorderLayout.NORTH);
+		this.frame.add(this.top,BorderLayout.PAGE_START);
 		this.frame.add(this.mid,BorderLayout.CENTER);
-		this.frame.add(this.bottom,BorderLayout.SOUTH);
+		this.frame.add(this.bottom,BorderLayout.PAGE_END);
+		this.bottom.add(this.weather);
 		
 		this.frame.pack();
 		this.frame.setVisible(true);
