@@ -90,7 +90,7 @@ public class RegisterInterface extends JFrame{
 				String pass = password.getText();
 				String mail = email.getText();
 				String tUser = twitter.getText();
-				System.out.println(pass);
+				//System.out.println(pass);
 				if(!mydb.userExists(user)){
 					mydb.createNewUser(user, pass, mail, tUser);
 					frame.dispose();

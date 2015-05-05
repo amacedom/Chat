@@ -19,23 +19,23 @@ public class User {
 		this.dbConn = dbConn;
 	}
 	
-	private String getUsername() {
+	public String getUsername() {
 		return this.username;
 	}
 	
-	private String getPassword() {
+	public String getPassword() {
 		return this.password;
 	}
 	
-	private String getEmail() {
+	public String getEmail() {
 		return this.email;
 	}
 	
-	private String getTwitterUsername() {
+	public String getTwitterUsername() {
 		return this.twitterUsername;
 	}
 	
-	private MySQL getDBConn() {
+	public MySQL getDBConn() {
 		return this.dbConn;
 	}
 	

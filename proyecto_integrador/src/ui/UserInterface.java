@@ -27,14 +27,14 @@ import javax.swing.JTextField;
 
 public class UserInterface extends JFrame {
 	// Elements of the user interface
-	JFrame frame;
-	JPanel top,mid,bottom;
+	protected JFrame frame;
+	protected JPanel top,mid,bottom;
 	JTextArea incoming;
-	JTextField outgoing,tweetField;
+	protected JTextField outgoing,tweetField;
 	JScrollPane scroll;
 	JLabel onlineUsers,to,message,tweetit; 
-	JComboBox userList;
-	JButton tweet;
+	protected JComboBox userList;
+	protected JButton tweet;
 	Dimension dim;
 	JMenuBar menuBar;
 	JMenu menu, submenu;
@@ -43,10 +43,10 @@ public class UserInterface extends JFrame {
 	String [] test  = {"All Users"};//remove this line
 
 	// The constructor to build the user interface of the client
-	public void createWindow() {
+	public void createWindow(String user) {
 		this.dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.frame = new JFrame("Chat Window");
-		this.frame.setTitle("Chat Client");
+		this.frame.setTitle("Chat for " + user);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.setLocation((dim.width/2)-250, (dim.height/2)-200);
 		this.frame.setResizable(false);
@@ -131,7 +131,7 @@ public class UserInterface extends JFrame {
 	private Image getImage() {
 		Image img = null;
 		try {
-		    img = ImageIO.read(getClass().getResource("twitter.bmp"));
+		    img = ImageIO.read(getClass().getResource("/ui/twitter.bmp"));
 		} catch (IOException ex) {
 			System.out.println("Error: Couldn't find image");
 		}

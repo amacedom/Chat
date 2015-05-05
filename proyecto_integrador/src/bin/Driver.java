@@ -11,10 +11,12 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
+import modules.ChatClient;
 import db.MySQL;
 import db.User;
 import ui.AuthInterface;
@@ -41,16 +43,19 @@ public class Driver extends JFrame {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
 		MySQL mydb = new MySQL();
-		AuthInterface au = new AuthInterface(mydb);
+		//AuthInterface au = new AuthInterface(mydb);
 		//mydb.closeConn();
+		User userDB = mydb.getUserData("armandm");
+		
+		init(userDB);
 	}
 	
-	public void init(User userDB) {
+	public static void init(User userDB) {
 		// create instances
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		frame = new JFrame("New Instance");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setSize(100,200);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
@@ -63,7 +68,7 @@ public class Driver extends JFrame {
 		server = new JRadioButton("Server instance");
 		client = new JRadioButton("Client instance");
 		
-		initButtons(); //initialize the buttons
+		initButtons(userDB); //initialize the buttons
 		
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(server);
@@ -78,11 +83,12 @@ public class Driver extends JFrame {
 		
 		bottom = new JPanel();
 		bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
+		bottom.add(Box.createRigidArea(new Dimension(120, 0)));
 		bottom.add(Box.createHorizontalGlue());
 		bottom.add(ok);
-		bottom.add(Box.createRigidArea(new Dimension(5, 0)));
-		bottom.add(close);
-		bottom.add(Box.createRigidArea(new Dimension(15, 0)));
+		//bottom.add(Box.createRigidArea(new Dimension(5, 0)));
+		//bottom.add(close);
+		//bottom.add(Box.createRigidArea(new Dimension(15, 0)));
 	
 		panel.add(bottom);
 		frame.getContentPane().add(panel); // add to a container
@@ -90,13 +96,17 @@ public class Driver extends JFrame {
 		displayWindow();
 	}
 	
-	private static void runInstance() {
+	private static void runInstance(User userDB) {
 		// depending on the selected option, do the following
 		switch(getSelectedOption()) {
 		case "server": System.out.println("Running server instance...");
+					   frame.dispose();
+					   
 					   break;
 			
 		case "client": System.out.println("Running client instance...");
+					   ChatClient client = new ChatClient(userDB);
+					   frame.dispose();
 					   break;
 		
 		case "error": System.out.println("Something went wrong!...");
@@ -134,21 +144,23 @@ public class Driver extends JFrame {
 	}
 	
 	@SuppressWarnings("serial")
-	private static void initButtons() {
+	private static void initButtons(User userDB) {
 		ok = new JButton(new AbstractAction("OK"){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				runInstance();
+				runInstance(userDB);
 			}
 		});
-		close = new JButton(new AbstractAction("Close"){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				frame.dispose();
-			}
+		
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        JOptionPane.showMessageDialog(frame,"Please select an option","Attention",JOptionPane.INFORMATION_MESSAGE);
+		        
+		    }
 		});
+		
 	}
 	
 	private static void displayWindow() { 

@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.Statement;
 
 import ui.AuthInterface;
 
@@ -20,7 +22,7 @@ public class MySQL {
 	String password;
 	Connection conn;
 	
-	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser;
+	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser,getAll;
 	
 	public MySQL() {
 		this.url = "jdbc:mysql://localhost:3306/"; 
@@ -41,6 +43,26 @@ public class MySQL {
 
 		return conn;
 	}
+	
+	public ArrayList<String> getAllUsers(String username) {
+		String query = "select username from " + dbName + ".chat_users where username != ? order by username asc";
+		//String[] users = new String[50];
+		ArrayList<String> users = new ArrayList<String>();
+		try {
+			this.getAll = (PreparedStatement) conn.prepareStatement(query);
+			getAll.setString(1, username);
+			ResultSet rs = getAll.executeQuery();
+			while(rs.next()) {
+				users.add(rs.getString("username"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return users;
+	}
+	
 	
 	public boolean passwordMatches(String username, String password) {
 		String query = "select count(*) from " + dbName + ".chat_users where username = ? and password = ? ";
@@ -131,14 +153,14 @@ public class MySQL {
 	
 	public User getUserData(String username) {
 		String query = "select id,username,password,email,twitter_username,status from " + dbName + ".chat_users where username = ?";
-		User user;
+		User userDB = null;
 		try {
 			this.getUser = (PreparedStatement) conn.prepareStatement(query);
 			getUser.setString(1, username);
 			ResultSet rs = getUser.executeQuery();
 			MySQL mysql = new MySQL();
 			while(rs.next()) {
-				user = new User(rs.getInt("id"),rs.getString("username"),rs.getString("password"),
+				userDB = new User(rs.getInt("id"),rs.getString("username"),rs.getString("password"),
 						rs.getString("email"),rs.getString("twitter_username"),rs.getString("status"),mysql);
 			}
 		
@@ -146,7 +168,7 @@ public class MySQL {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return userDB;
 	}
 	
 	public void closeConn() {
