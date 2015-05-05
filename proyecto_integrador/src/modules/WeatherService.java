@@ -9,22 +9,30 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.JLabel;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
 import com.mysql.jdbc.Connection;
 
+import twitter4j.JSONArray;
 import twitter4j.JSONException;
 import twitter4j.JSONObject;
 import ui.UserInterface;
 
-public class WeatherService extends UserInterface {
+public class WeatherService {
 	String ipString;
 	URL url;
 	HttpURLConnection conn;
 	JSONObject json;
+	JLabel weatherText;
 	
 	public WeatherService() {
+		super();
 		this.ipString = getIp();
 		this.url = getURL();
 		try {
@@ -35,6 +43,27 @@ public class WeatherService extends UserInterface {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	
+	public String getWeatherText() {
+		String text = "Guadalajara, MX, ";
+		JSONObject jclouds,jmain,jwind;
+		JSONArray jweather;
+		try {
+			jweather = json.getJSONArray("weather");
+		    jclouds = (JSONObject) jweather.get(0);
+		    text += jclouds.get("description");
+		    jmain = json.getJSONObject("main");
+		    //text +=  " Wind speed:" + jwind.getString("speed") + " degrees:" + jwind.get("deg");
+		    text += " Humidity:" + jmain.get("humidity") + "%, Temp:" + (jmain.getInt("temp")-273)+  "°C" ;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		System.out.println(text);
+		return text;
 	}
 	
 	private JSONObject getWeatherJSON() throws JSONException {

@@ -35,7 +35,6 @@ public class ChatClient extends UserInterface implements SocketSetup {
     public ChatClient(User userDB) {
     	super();
     	super.createWindow(userDB.getUsername());
-    	new WeatherService();
     	this.frame = super.frame;
     	this.tweet = super.tweet;
     	this.userDB = userDB;

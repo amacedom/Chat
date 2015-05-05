@@ -25,6 +25,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import modules.WeatherService;
+
 public class UserInterface extends JFrame {
 	// Elements of the user interface
 	protected JFrame frame;
@@ -39,6 +41,7 @@ public class UserInterface extends JFrame {
 	JMenuBar menuBar;
 	JMenu menu, submenu;
 	JMenuItem users,sendFile,quit;
+	WeatherService ws;
 	
 	String [] test  = {"All Users"};//remove this line
 
@@ -99,18 +102,17 @@ public class UserInterface extends JFrame {
 		this.bottom.add(tweet);
 		
 		// init the weather part
+		this.ws = new WeatherService();
 		this.weather = new JPanel();
 		this.weather.setPreferredSize(new Dimension(500,25));
 		this.weather.setLayout(new BoxLayout(weather,BoxLayout.X_AXIS));
-		this.weatherText = new JLabel("Weather goes here!");
+		this.weatherText = new JLabel(ws.getWeatherText());
 		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.weather.add(weatherText,BorderLayout.LINE_START);
 		this.timeText = new JLabel("hh:mm:ss");
-		this.weather.add(Box.createRigidArea(new Dimension(310, 0)));
+		this.weather.add(Box.createRigidArea(new Dimension(120, 0)));
 		this.weather.add(timeText,BorderLayout.LINE_END);
 		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
-		
-		
 
 		
 		// init menu options
