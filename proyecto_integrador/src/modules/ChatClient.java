@@ -117,12 +117,12 @@ public class ChatClient extends UserInterface implements SocketSetup {
         
         outgoing.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-            	if(to.getText().equals("")){
+            	if(userList.getSelectedItem().toString().equals("All Users")){
             		sendMessage(userDB.getUsername()+": "+outgoing.getText());
             	}
             	else
             	{
-            		String user = to.getText();
+            		String user = userList.getSelectedItem().toString();
                 	sendMessage("<privateMessage>"+userDB.getUsername()+": "+outgoing.getText()+"</privateMessage><user>"+user+"</user><from>"+userDB.getUsername()+"</from>");
                 	to.setText("");
             	}

@@ -42,8 +42,8 @@ public class Driver extends JFrame {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
-		//MySQL mydb = new MySQL();
-		MySQL mydb = new MySQL("45.55.251.74");
+		MySQL mydb = new MySQL();
+		//MySQL mydb = new MySQL("45.55.251.74");
 		AuthInterface au = new AuthInterface(mydb);
 		//mydb.closeConn();
 		User userDB = mydb.getUserData("armandm");

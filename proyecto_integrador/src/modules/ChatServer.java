@@ -99,14 +99,14 @@ public class ChatServer implements SocketSetup {
     		String newUser = temp[0];
             Client c = new Client(receivedPacket, serverSocket, newUser,PACKET_SIZE);
             clients.add(c);
-            sendMessageToAll(c.nick + " se ha unido a la conversación");
+            sendMessageToAll(c.nick + " has joined the conversation");
             updateConnectedUsers();
     	}
     	else if(parts[0].equals("<quit")){
             for(Client c: clients) { // who wants to quit?
                 if(c.clientPacket.getAddress().equals(receivedPacket.getAddress()) &&
                    c.clientPacket.getPort() == receivedPacket.getPort()) {
-                     sendMessageToAll(c.nick + " ha abandonado la conversación");
+                     sendMessageToAll(c.nick + " has left the conversation");
                      clients.remove(c);
                      break; // Can't continue iterating through collection once it has been modified
                 }                        

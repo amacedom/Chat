@@ -77,7 +77,7 @@ public class UserInterface extends JFrame {
 		this.mid.setPreferredSize(new Dimension(480,250));
 		this.mid.setLayout(new BoxLayout(mid, BoxLayout.X_AXIS));
 		this.incoming = new JTextArea();
-		this.incoming.setText("testing this shit"); // remove this line
+		//this.incoming.setText("testing this shit"); // remove this line
 		this.scroll = new JScrollPane(incoming);
 		this.mid.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.mid.add(this.scroll);
