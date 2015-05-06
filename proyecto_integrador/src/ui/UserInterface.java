@@ -19,19 +19,21 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import modules.WeatherService;
+import modules.ChatClient;
+import webservice.WeatherService;
 
 public class UserInterface extends JFrame {
 	// Elements of the user interface
 	protected JFrame frame;
 	protected JPanel top,mid,bottom,weather;
-	JTextArea incoming;
+	protected JTextArea incoming;
 	protected JTextField outgoing,tweetField;
 	JScrollPane scroll;
 	protected JLabel onlineUsers,to,message,tweetit,weatherText,timeText; 
@@ -40,7 +42,7 @@ public class UserInterface extends JFrame {
 	Dimension dim;
 	JMenuBar menuBar;
 	JMenu menu, submenu;
-	JMenuItem users,sendFile,quit;
+	protected JMenuItem users,sendFile,quit;
 	WeatherService ws;
 	
 	String [] test  = {"All Users"};//remove this line
@@ -50,9 +52,10 @@ public class UserInterface extends JFrame {
 		this.dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.frame = new JFrame("Chat Window");
 		this.frame.setTitle("Chat for " + user);
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.frame.setLocation((dim.width/2)-250, (dim.height/2)-200);
 		this.frame.setResizable(false);
+
 		
 		// init the top part
 		this.top = new JPanel();
@@ -110,7 +113,7 @@ public class UserInterface extends JFrame {
 		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.weather.add(weatherText,BorderLayout.LINE_START);
 		this.timeText = new JLabel("hh:mm:ss");
-		this.weather.add(Box.createRigidArea(new Dimension(120, 0)));
+		this.weather.add(Box.createRigidArea(new Dimension(100, 0)));
 		this.weather.add(timeText,BorderLayout.LINE_END);
 		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
 

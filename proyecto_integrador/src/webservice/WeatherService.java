@@ -1,4 +1,4 @@
-package modules;
+package webservice;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,20 +9,11 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import javax.swing.JLabel;
-
-import jdk.nashorn.internal.parser.JSONParser;
-
-import com.mysql.jdbc.Connection;
 
 import twitter4j.JSONArray;
 import twitter4j.JSONException;
 import twitter4j.JSONObject;
-import ui.UserInterface;
 
 public class WeatherService {
 	String ipString;
@@ -38,7 +29,7 @@ public class WeatherService {
 		try {
 			this.conn = (HttpURLConnection) url.openConnection();
 			conn.connect();
-			this.json = getWeatherJSON();
+			this.json = getWeatherJSON();	
 		} catch (IOException | JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

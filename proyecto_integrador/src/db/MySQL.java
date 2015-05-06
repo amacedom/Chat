@@ -28,7 +28,16 @@ public class MySQL {
 		this.url = "jdbc:mysql://localhost:3306/"; 
 		this.dbName = "distribuidos";
 		this.driver = "com.mysql.jdbc.Driver"; 
-		this.userName = "root"; 
+		this.userName = "armandm"; 
+		this.password = "admin4us"; 	
+		this.conn = connectToMySQL();
+	}
+	
+	public MySQL(String hostname) {
+		this.url = "jdbc:mysql://"+ hostname + ":3306/"; 
+		this.dbName = "distribuidos";
+		this.driver = "com.mysql.jdbc.Driver"; 
+		this.userName = "armandm"; 
 		this.password = "admin4us"; 	
 		this.conn = connectToMySQL();
 	}
@@ -45,7 +54,7 @@ public class MySQL {
 	}
 	
 	public ArrayList<String> getAllUsers(String username) {
-		String query = "select username from " + dbName + ".chat_users where username != ? order by username asc";
+		String query = "select username from chat_users where username != ? order by username asc";
 		//String[] users = new String[50];
 		ArrayList<String> users = new ArrayList<String>();
 		try {
@@ -65,7 +74,7 @@ public class MySQL {
 	
 	
 	public boolean passwordMatches(String username, String password) {
-		String query = "select count(*) from " + dbName + ".chat_users where username = ? and password = ? ";
+		String query = "select count(*) from chat_users where username = ? and password = ? ";
 		boolean retval = false;
 		int count = 0;
 		try {
@@ -87,7 +96,7 @@ public class MySQL {
 	}
 	
 	public void login(String username) {
-		String query = "update " + dbName + ".chat_users set status='online' where username = ?";
+		String query = "update chat_users set status='online' where username = ?";
 		try { 
 			this.connect = (PreparedStatement) conn.prepareStatement(query);
 			connect.setString(1, username);
@@ -98,7 +107,7 @@ public class MySQL {
 	}
 	
 	public void logout(String username) {
-		String query = "update " + dbName + ".chat_users set status='offline' where username = ?";
+		String query = "update chat_users set status='offline' where username = ?";
 		try { 
 			this.connect = (PreparedStatement) conn.prepareStatement(query);
 			connect.setString(1, username);
@@ -109,7 +118,7 @@ public class MySQL {
 	}
 	
 	public boolean userExists(String username) {
-		String query = "select count(*) as count from " + dbName + ".chat_users where username = ?"; 
+		String query = "select count(*) as count from chat_users where username = ?"; 
 		int count = -1;
 		try {
 			this.userExist = (PreparedStatement) conn.prepareStatement(query);
@@ -152,7 +161,7 @@ public class MySQL {
 	}
 	
 	public User getUserData(String username) {
-		String query = "select id,username,password,email,twitter_username,status from " + dbName + ".chat_users where username = ?";
+		String query = "select id,username,password,email,twitter_username,status from chat_users where username = ?";
 		User userDB = null;
 		try {
 			this.getUser = (PreparedStatement) conn.prepareStatement(query);

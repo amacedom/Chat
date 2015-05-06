@@ -11,6 +11,7 @@ import twitter4j.conf.ConfigurationBuilder;
 import ui.UserInterface;
 
 import java.awt.event.*;
+import java.io.IOException;
 import java.net.*;
 import java.awt.*;
 import java.util.concurrent.*;
@@ -22,15 +23,19 @@ public class ChatClient extends UserInterface implements SocketSetup {
     DatagramPacket sentPacket;
     DatagramSocket clientSocket;
     volatile boolean running = true;
+    ExecutorService es;
     String consumerKey,consumerSecret;
     Twitter twitter;
-    ExecutorService es = Executors.newFixedThreadPool(1);
+    User userDB;
+    
     JFrame frame;
     JPanel top,mid,bottom;
-    JTextField tweetField;
+    JTextField tweetField,outgoing;
+    JTextArea incoming;
+    JLabel onlineUsers;
     JButton tweet;
     JComboBox userList;
-    User userDB;
+    JMenuItem quit;
 	
     public ChatClient(User userDB) {
     	super();
@@ -39,8 +44,26 @@ public class ChatClient extends UserInterface implements SocketSetup {
     	this.tweet = super.tweet;
     	this.userDB = userDB;
     	this.userList = super.userList;
+    	this.onlineUsers = super.onlineUsers;
+    	this.incoming = super.incoming;
+    	this.outgoing = super.outgoing;
     	this.tweetField = super.tweetField;
+    	this.quit = super.quit;
+    	this.es = Executors.newFixedThreadPool(1);
     	updateUserList();
+    	setupSocket();
+    	
+    	frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    String[] options = {"Yes","No"};
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        int option = JOptionPane.showOptionDialog(frame,"Are you sure you want to leave?", "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,options,options[0] );
+		        if(option == JOptionPane.YES_OPTION) {
+		        	for(ActionListener a: quit.getActionListeners()) {
+		        		a.actionPerformed(new ActionEvent(this,ActionEvent.ACTION_PERFORMED,null));
+		        	}
+		        }
+		    }
+		});
   
     	tweet.addActionListener(new ActionListener(){
 			@Override
@@ -79,8 +102,117 @@ public class ChatClient extends UserInterface implements SocketSetup {
     @Override
 	public boolean setupSocket() {
 		// TODO Auto-generated method stub
-		return false;
+    	// Next, the client itself.
+        try {
+            clientSocket = new DatagramSocket();
+            clientSocket.setSoTimeout(1000);
+            receivedPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+            sentPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE, InetAddress.getLocalHost(), 4405);
+        } catch(Exception e) { 
+            System.out.println("ChatClient error: " + e);
+            return false;
+        }
+        
+        sendMessage("<newUser>" +userDB.getUsername()+"</newUser>");		//new user joined
+        
+        outgoing.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+            	if(to.getText().equals("")){
+            		sendMessage(userDB.getUsername()+": "+outgoing.getText());
+            	}
+            	else
+            	{
+            		String user = to.getText();
+                	sendMessage("<privateMessage>"+userDB.getUsername()+": "+outgoing.getText()+"</privateMessage><user>"+user+"</user><from>"+userDB.getUsername()+"</from>");
+                	to.setText("");
+            	}
+            	outgoing.setText("");
+            }
+        });
+        
+        
+        quit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                sendMessage("<quit>");
+                ChatClient.this.finalize();
+            }
+        });
+     
+        
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                sendMessage("<quit>");
+                ChatClient.this.finalize();
+            }
+        });
+        
+      
+        es.submit(new Runnable() {
+            public void run() {                
+                try {
+                    while(running) {
+                        try {
+                            // Wait for the next incoming datagram.
+                            clientSocket.receive(receivedPacket);
+                            // Extract the message from the datagram.
+                            byte[] ba = receivedPacket.getData();
+                            ba = java.util.Arrays.copyOfRange(ba, 0, receivedPacket.getLength());
+                            String message = new String(ba);
+                            
+                            readMessage(message);
+                        }
+                        catch(SocketTimeoutException e) { /* No message this time */ }
+                    }
+                }
+                catch(IOException e) {
+                    System.out.println("ChatClient error: " + e);
+                }
+                finally {
+                    clientSocket.close();
+                    System.out.println("ChatClient terminated");
+                }
+            }
+        });        
+    	
+		return true;
 	}
+    
+    // The method to send a message to the server. 
+    private void sendMessage(String message) {
+        try {
+            byte[] ba = message.getBytes();
+            sentPacket.setData(ba);
+            sentPacket.setLength(ba.length);
+            clientSocket.send(sentPacket);
+        } catch(IOException e) { 
+        	System.out.println("ChatClient error: " + e); 
+        }        
+    }
+    
+    public void readMessage(String xml){
+    	System.out.println(xml);
+    	if(xml.startsWith("<users"))
+    	{
+	    	String[] parts = xml.split(">");
+	    	String[] temp;	
+	    	if(parts[0].equals("<users")){
+	    		temp = parts[1].split("<");
+	    		String users = temp[0];
+	    		users = users.substring(0, users.length() - 1);
+	    		onlineUsers.setText("Online Users: "+users);
+	    	}
+    	}
+    	else
+    		incoming.append(xml+"\n");
+    }
+    
+    //shutdown client
+    public void finalize() {
+        running = false;
+        es.shutdownNow();
+        frame.dispose();
+        userDB.getDBConn().closeConn();
+    }
     
     public void setTwitterConf() throws MalformedURLException, TwitterException {
     	 this.consumerKey = "RGNk3E5WbotJHsF70mGDEIGL6";
