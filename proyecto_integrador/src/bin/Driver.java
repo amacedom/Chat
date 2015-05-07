@@ -45,10 +45,10 @@ public class Driver extends JFrame {
 		//new UserInterface().createWindow();
 		//MySQL mydb = new MySQL();
 		MySQL mydb = new MySQL("45.55.251.74");
-		//AuthInterface au = new AuthInterface(mydb);
+		AuthInterface au = new AuthInterface(mydb);
 		//mydb.closeConn();
-		User userDB = mydb.getUserData("armandm");
-		new ManageUsersInterface(userDB,"unblock");
+		//User userDB = mydb.getUserData("armandm");
+		//new ManageUsersInterface(userDB,"block");
 		//init(userDB);
 	}
 	

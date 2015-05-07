@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,7 +58,7 @@ public class MySQL {
 			ResultSet rs = getBlocked.executeQuery();
 			while(rs.next()) {
 				blocked = rs.getString(1);
-				System.out.println(blocked);
+				//System.out.println(blocked);
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -68,9 +70,29 @@ public class MySQL {
 		return users;
 	}
 	
-	public String[] getUnblockedUsers(String username) {
-		String[] users = {};
-		String query = "";
+	public ArrayList<String> getUnblockedUsers(String username) {
+		ArrayList<String> users = new ArrayList<String>();
+		ArrayList<String> allUsers = getAllUsers(username);
+		String[] blockedUsers = getBlockedUsers(username);
+		HashMap<String,String> map = new HashMap<String,String>();
+		
+		for(String str: allUsers) {
+			map.put(str, "unblocked");
+		}
+		
+		for(String str: blockedUsers) {
+			if(map.containsKey(str)){
+				map.put(str, "blocked");
+			}
+		}
+		
+		for(Entry<String,String> entry: map.entrySet()){
+			if(entry.getValue().equals("unblocked")){
+				users.add(entry.getKey());
+			}
+				
+		}
+		
 		
 		return users;
 	}
@@ -84,13 +106,23 @@ public class MySQL {
 			ResultSet rs = getBlockedString.executeQuery();
 			while(rs.next()) {
 				blocked = rs.getString(1);
-				System.out.println(blocked);
+				//System.out.println(blocked);
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		return blocked;
+	}
+	
+	public String getUnblockedUsersString(String username) {
+		String unblocked = "";
+		ArrayList<String> unblockedList = getUnblockedUsers(username);
+		for(String str: unblockedList) {
+			unblocked += str + ",";
+		}
+		
+		return unblocked;
 	}
 	
 	public void blockUser(String username,String target) {
@@ -116,7 +148,7 @@ public class MySQL {
 		while(matcher.find()) {
 			//System.out.println(matcher.start());
 			//System.out.println(matcher.end());
-			unblocked = blocked.substring(0, matcher.start()) + blocked.substring(matcher.end()+1, blocked.length());
+			unblocked = blocked.substring(0, matcher.start()) + blocked.substring(matcher.end(), blocked.length());
 		}
 		
 		try {

@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -26,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import db.User;
 import modules.ChatClient;
 import webservice.WeatherService;
 
@@ -42,16 +45,18 @@ public class UserInterface extends JFrame {
 	Dimension dim;
 	JMenuBar menuBar;
 	JMenu menu, submenu;
-	protected JMenuItem users,sendFile,quit;
+	protected JMenuItem blockUser,unblockUser,sendFile,quit;
 	WeatherService ws;
+	User userDB;
 	
 	String [] test  = {"All Users"};//remove this line
 
 	// The constructor to build the user interface of the client
-	public void createWindow(String user) {
+	public void createWindow(User userDB) {
 		this.dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.frame = new JFrame("Chat Window");
-		this.frame.setTitle("Chat for " + user);
+		this.userDB = userDB;
+		this.frame.setTitle("Chat for " + this.userDB.getUsername());
 		this.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.frame.setLocation((dim.width/2)-250, (dim.height/2)-200);
 		this.frame.setResizable(false);
@@ -136,12 +141,34 @@ public class UserInterface extends JFrame {
 	    
 	    // build the File menu
 	    this.submenu = new JMenu("Chat Options");
-	    this.users = new JMenuItem("Manage users...");
+	    this.blockUser = new JMenuItem("Block User...");
+	    this.unblockUser = new JMenuItem("Unblock User...");
 	    this.sendFile = new JMenuItem("Send a file...");
 	    this.quit = new JMenuItem("Quit");
-	    this.submenu.add(this.users);
+	    this.submenu.add(this.blockUser);
+	    this.submenu.add(this.unblockUser);
 	    this.submenu.add(this.sendFile);
 	    this.submenu.add(this.quit);
+	    
+	    blockUser.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				ManageUsersInterface block = new ManageUsersInterface(userDB,"block");
+			}
+	    	
+	    });
+	    
+	    unblockUser.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				ManageUsersInterface block = new ManageUsersInterface(userDB,"unblock");
+			}
+	    	
+	    });
 	 
 	    // add menus to menubar
 	    this.menuBar.add(this.submenu);

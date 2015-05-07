@@ -96,7 +96,7 @@ public class AuthInterface extends JFrame {
 				if(mydb.passwordMatches(user, pass)) {
 					mydb.login(user);
 					User userDB = mydb.getUserData(user);
-					mydb.closeConn();
+					//mydb.closeConn();
 					frame.dispose();
 					new Driver().init(userDB);
 				}

@@ -1,33 +1,20 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import db.User;
-import webservice.WeatherService;
 
 public class ManageUsersInterface {
 	protected JFrame frame;
@@ -42,11 +29,12 @@ public class ManageUsersInterface {
 	public ManageUsersInterface(User userDB,String option) {
 		this.userDB = userDB;
 		if(option.equals("block")) {
-		//	if(!userDB.getDBConn().getUnblockedUsersString(userDB.getUsername()).equals(""))
+			if(!userDB.getDBConn().getUnblockedUsersString(userDB.getUsername()).equals("")) {
 				createBlockWindow();
-			//else
-				//JOptionPane.showMessageDialog(frame, "You do not have any blocked contacts");
-			
+				updateUnblockedList(userDB, userDB.getUsername());
+			}
+			else
+				JOptionPane.showMessageDialog(frame, "There are no contacts to block");
 		}
 			
 		else
@@ -76,7 +64,7 @@ public class ManageUsersInterface {
 		this.left.add(selectUsers);
 		this.combo = new JPanel();
 		this.left.add(Box.createRigidArea(new Dimension(0, 5)));
-		this.allUsers = new JComboBox(userDB.getDBConn().getUnblockedUsers(userDB.getUsername()));
+		this.allUsers = new JComboBox();
 		this.combo.add(allUsers);
 		this.left.add(combo);
 		
@@ -138,6 +126,13 @@ public class ManageUsersInterface {
 			}
 			
 		});
+	}
+	
+	public void updateUnblockedList(User userDB, String username) {
+		for(String str: userDB.getDBConn().getUnblockedUsers(username)) {
+			this.allUsers.addItem(str);
+		}
+		
 	}
 
 }
