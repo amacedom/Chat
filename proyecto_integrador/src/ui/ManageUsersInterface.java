@@ -20,6 +20,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -41,12 +42,19 @@ public class ManageUsersInterface {
 	public ManageUsersInterface(User userDB,String option) {
 		this.userDB = userDB;
 		if(option.equals("block")) {
-			createBlockWindow();
+		//	if(!userDB.getDBConn().getUnblockedUsersString(userDB.getUsername()).equals(""))
+				createBlockWindow();
+			//else
+				//JOptionPane.showMessageDialog(frame, "You do not have any blocked contacts");
 			
 		}
 			
 		else
-			createUnBlockWindow();
+			if(!userDB.getDBConn().getBlockedUsersString(userDB.getUsername()).equals(""))
+				createUnBlockWindow();
+			else
+				JOptionPane.showMessageDialog(frame, "You do not have any blocked contacts");
+
 		
 	}
 

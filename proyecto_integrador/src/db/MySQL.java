@@ -100,7 +100,7 @@ public class MySQL {
 			this.blockUser = (PreparedStatement) conn.prepareStatement(query);
 			blockUser.setString(1, blocked);
 			blockUser.setString(2, username);
-			ResultSet rs = blockUser.executeQuery();
+			blockUser.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -123,7 +123,7 @@ public class MySQL {
 			this.unblockUser = (PreparedStatement) conn.prepareStatement(query);
 			unblockUser.setString(1, unblocked);
 			unblockUser.setString(2, username);
-			ResultSet rs = unblockUser.executeQuery();
+			unblockUser.execute();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
