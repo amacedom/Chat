@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -22,16 +24,7 @@ public class MySQL {
 	String password;
 	Connection conn;
 	
-	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser,getAll;
-	
-	public MySQL() {
-		this.url = "jdbc:mysql://localhost:3306/"; 
-		this.dbName = "distribuidos";
-		this.driver = "com.mysql.jdbc.Driver"; 
-		this.userName = "armandm"; 
-		this.password = "admin4us"; 	
-		this.conn = connectToMySQL();
-	}
+	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser,getAll,getBlocked,getBlockedString,blockUser,unblockUser;
 	
 	public MySQL(String hostname) {
 		this.url = "jdbc:mysql://"+ hostname + ":3306/"; 
@@ -51,6 +44,90 @@ public class MySQL {
 		} 
 
 		return conn;
+	}
+	
+	public String[] getBlockedUsers(String username) {
+		String[] users = {};
+		String query = "select blocked_users from chat_users where username = ?";
+		String blocked = "";
+		try {
+			this.getBlocked = (PreparedStatement) conn.prepareStatement(query);
+			getBlocked.setString(1, username);
+			ResultSet rs = getBlocked.executeQuery();
+			while(rs.next()) {
+				blocked = rs.getString(1);
+				System.out.println(blocked);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(!blocked.equals("")) {
+			users = blocked.split(",");
+		}
+		
+		return users;
+	}
+	
+	public String[] getUnblockedUsers(String username) {
+		String[] users = {};
+		String query = "";
+		
+		return users;
+	}
+	
+	public String getBlockedUsersString(String username) {
+		String query = "select blocked_users from chat_users where username = ?";
+		String blocked = "";
+		try {
+			this.getBlockedString = (PreparedStatement) conn.prepareStatement(query);
+			getBlockedString.setString(1, username);
+			ResultSet rs = getBlockedString.executeQuery();
+			while(rs.next()) {
+				blocked = rs.getString(1);
+				System.out.println(blocked);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return blocked;
+	}
+	
+	public void blockUser(String username,String target) {
+		String query = "update chat_users set blocked_users = ? where username = ?";
+		String blocked = getBlockedUsersString(username) + target;
+		try {
+			this.blockUser = (PreparedStatement) conn.prepareStatement(query);
+			blockUser.setString(1, blocked);
+			blockUser.setString(2, username);
+			ResultSet rs = blockUser.executeQuery();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void unblockUser(String username, String target) {
+		String query = "update chat_users set blocked_users = ? where username = ?";
+		Pattern p = Pattern.compile(target);
+		String blocked = getBlockedUsersString(username);
+		Matcher matcher = p.matcher(blocked);
+		String unblocked = null;
+		while(matcher.find()) {
+			//System.out.println(matcher.start());
+			//System.out.println(matcher.end());
+			unblocked = blocked.substring(0, matcher.start()) + blocked.substring(matcher.end()+1, blocked.length());
+		}
+		
+		try {
+			this.unblockUser = (PreparedStatement) conn.prepareStatement(query);
+			unblockUser.setString(1, unblocked);
+			unblockUser.setString(2, username);
+			ResultSet rs = unblockUser.executeQuery();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public ArrayList<String> getAllUsers(String username) {
@@ -167,10 +244,10 @@ public class MySQL {
 			this.getUser = (PreparedStatement) conn.prepareStatement(query);
 			getUser.setString(1, username);
 			ResultSet rs = getUser.executeQuery();
-			MySQL mysql = new MySQL();
+			//MySQL mysql = new MySQL();
 			while(rs.next()) {
 				userDB = new User(rs.getInt("id"),rs.getString("username"),rs.getString("password"),
-						rs.getString("email"),rs.getString("twitter_username"),rs.getString("status"),mysql);
+						rs.getString("email"),rs.getString("twitter_username"),rs.getString("status"),this);
 			}
 		
 		} catch (SQLException e) {

@@ -20,6 +20,7 @@ import modules.ChatClient;
 import db.MySQL;
 import db.User;
 import ui.AuthInterface;
+import ui.ManageUsersInterface;
 import ui.RegisterInterface;
 import ui.UserInterface;
 
@@ -42,12 +43,12 @@ public class Driver extends JFrame {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
-		MySQL mydb = new MySQL();
-		//MySQL mydb = new MySQL("45.55.251.74");
-		AuthInterface au = new AuthInterface(mydb);
+		//MySQL mydb = new MySQL();
+		MySQL mydb = new MySQL("45.55.251.74");
+		//AuthInterface au = new AuthInterface(mydb);
 		//mydb.closeConn();
 		User userDB = mydb.getUserData("armandm");
-		
+		new ManageUsersInterface(userDB,"unblock");
 		//init(userDB);
 	}
 	
