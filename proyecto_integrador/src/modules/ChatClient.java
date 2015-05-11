@@ -35,7 +35,7 @@ public class ChatClient extends UserInterface implements SocketSetup {
     JLabel onlineUsers;
     JButton tweet;
     JComboBox userList;
-    JMenuItem quit;
+    JMenuItem quit,refresh;
 	
     public ChatClient(User userDB) {
     	super();
@@ -47,6 +47,7 @@ public class ChatClient extends UserInterface implements SocketSetup {
     	this.onlineUsers = super.onlineUsers;
     	this.incoming = super.incoming;
     	this.outgoing = super.outgoing;
+    	this.refresh = super.refresh;
     	this.tweetField = super.tweetField;
     	this.quit = super.quit;
     	this.es = Executors.newFixedThreadPool(1);
@@ -130,6 +131,15 @@ public class ChatClient extends UserInterface implements SocketSetup {
             }
         });
         
+        refresh.addActionListener(new ActionListener () {
+	    	
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				updateUserList();
+			}
+	    	
+	    });
         
         quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -211,6 +221,7 @@ public class ChatClient extends UserInterface implements SocketSetup {
         running = false;
         es.shutdownNow();
         frame.dispose();
+        super.updateTime = null; //this kills the clock thread ;)
         userDB.getDBConn().closeConn();
     }
     
@@ -291,10 +302,11 @@ public class ChatClient extends UserInterface implements SocketSetup {
     }
     
     public void updateUserList() {
-    	for(String str: this.userDB.getDBConn().getAllUsers(this.userDB.getUsername())) {
+    	/*for(String str: this.userDB.getDBConn().getAllUsers(this.userDB.getUsername())) {
     		userList.addItem(str);
-    	}
-    		
+    	}*/
+    	for(String str: this.userDB.getDBConn().getUnblockedUsers(this.userDB.getUsername()))
+    		userList.addItem(str);
     }
     
     

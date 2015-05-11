@@ -20,10 +20,8 @@ import modules.ChatClient;
 import db.MySQL;
 import db.User;
 import ui.AuthInterface;
-import ui.ManageUsersInterface;
 import ui.RegisterInterface;
 import ui.UserInterface;
-import webservice.StatusBar;
 
 import java.sql.*;
 
@@ -39,13 +37,15 @@ public class Driver extends JFrame {
 	static JButton close;
 	static ButtonGroup buttonGroup;
 	static Dimension dim;
+	public boolean RUNNING = false;
 	
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//new UserInterface().createWindow();
 		//MySQL mydb = new MySQL();
-		MySQL mydb = new MySQL("45.55.251.74");
+		//MySQL mydb = new MySQL("45.55.251.74");
+		MySQL mydb = new MySQL("127.0.0.1");
 		AuthInterface au = new AuthInterface(mydb);
 		//mydb.closeConn();
 		//User userDB = mydb.getUserData("armandm");

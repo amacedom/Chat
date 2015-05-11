@@ -249,7 +249,7 @@ public class MySQL {
 	}
 	
 	public void createNewUser(String username, String password, String email, String twitter_username) {
-		String query = "insert into distribuidos.chat_users (id,username,password,email,twitter_username,status, last_login) values (default,?,?,?,?,'offline', null)"; 
+		String query = "insert into distribuidos.chat_users (id,username,password,email,twitter_username,blocked_users,status, last_login) values (default,?,?,?,?,'','offline', null)"; 
 		if(username.length() >= 4) {
 			try {
 				this.createUser = (PreparedStatement) conn.prepareStatement(query);

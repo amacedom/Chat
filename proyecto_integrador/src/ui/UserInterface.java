@@ -31,9 +31,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import bin.Driver;
 import db.User;
 import modules.ChatClient;
-import webservice.StatusBar;
 import webservice.WeatherService;
 
 public class UserInterface extends JFrame implements Runnable {
@@ -49,11 +49,11 @@ public class UserInterface extends JFrame implements Runnable {
 	Dimension dim;
 	JMenuBar menuBar;
 	JMenu menu, submenu;
-	protected JMenuItem blockUser,unblockUser,sendFile,quit;
+	protected JMenuItem blockUser,unblockUser,refresh,sendFile,quit;
 	WeatherService ws;
 	User userDB;
 	Calendar time;
-	Thread updateTime;
+	public volatile Thread updateTime;
 	
 	String [] test  = {"All Users"};//remove this line
 
@@ -153,11 +153,14 @@ public class UserInterface extends JFrame implements Runnable {
 	    this.blockUser = new JMenuItem("Block User...");
 	    this.unblockUser = new JMenuItem("Unblock User...");
 	    this.sendFile = new JMenuItem("Send a file...");
+	    this.refresh = new JMenuItem("Refresh chat...");
 	    this.quit = new JMenuItem("Quit");
+	    this.submenu.add(this.refresh);
 	    this.submenu.add(this.blockUser);
 	    this.submenu.add(this.unblockUser);
 	    this.submenu.add(this.sendFile);
 	    this.submenu.add(this.quit);
+	    
 	    
 	    blockUser.addActionListener(new ActionListener(){
 
@@ -200,7 +203,9 @@ public class UserInterface extends JFrame implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		while( frame != null ) {
+		Thread thisThread = Thread.currentThread();
+		
+		while( updateTime == thisThread ) {
 			this.time = new GregorianCalendar();
 			String hour = String.valueOf(time.get(Calendar.HOUR));
 			String min = String.valueOf(time.get(Calendar.MINUTE));
