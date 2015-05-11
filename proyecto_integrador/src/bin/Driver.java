@@ -23,6 +23,7 @@ import ui.AuthInterface;
 import ui.ManageUsersInterface;
 import ui.RegisterInterface;
 import ui.UserInterface;
+import webservice.StatusBar;
 
 import java.sql.*;
 
@@ -116,7 +117,7 @@ public class Driver extends JFrame {
 					  break;
 		}
 	}
-	
+	 
 	private static boolean canRun(String option) {
 		boolean retval = true;
 		//try to setup the networking of the selected socket

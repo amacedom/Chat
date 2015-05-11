@@ -8,6 +8,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -30,9 +33,10 @@ import javax.swing.JTextField;
 
 import db.User;
 import modules.ChatClient;
+import webservice.StatusBar;
 import webservice.WeatherService;
 
-public class UserInterface extends JFrame {
+public class UserInterface extends JFrame implements Runnable {
 	// Elements of the user interface
 	protected JFrame frame;
 	protected JPanel top,mid,bottom,weather;
@@ -48,6 +52,8 @@ public class UserInterface extends JFrame {
 	protected JMenuItem blockUser,unblockUser,sendFile,quit;
 	WeatherService ws;
 	User userDB;
+	Calendar time;
+	Thread updateTime;
 	
 	String [] test  = {"All Users"};//remove this line
 
@@ -117,11 +123,14 @@ public class UserInterface extends JFrame {
 		this.weatherText = new JLabel(ws.getWeatherText());
 		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.weather.add(weatherText,BorderLayout.LINE_START);
-		this.timeText = new JLabel("hh:mm:ss");
+		this.timeText = new JLabel("que pex");
+		this.updateTime = new Thread(this);
+		this.updateTime.start();
 		this.weather.add(Box.createRigidArea(new Dimension(100, 0)));
 		this.weather.add(timeText,BorderLayout.LINE_END);
 		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
-
+		
+		
 		
 		// init menu options
 		initMenu();
@@ -186,6 +195,25 @@ public class UserInterface extends JFrame {
 		}
 		
 		return img;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		while( frame != null ) {
+			this.time = new GregorianCalendar();
+			String hour = String.valueOf(time.get(Calendar.HOUR));
+			String min = String.valueOf(time.get(Calendar.MINUTE));
+			String sec = String.valueOf(time.get(Calendar.SECOND));
+			int meridian = time.get(Calendar.AM_PM);
+			String am_pm = "PM";
+			if(meridian == 0)
+				am_pm = "AM";
+			
+			//System.out.println(hour + ":" + min + ":" + sec);
+			this.timeText.setText(hour + ":" + min + ":" + sec + " " + am_pm);
+		}
+		
 	}
 	
 }
