@@ -1,7 +1,15 @@
 package modules;
 import interfaces.SocketSetup;
 
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.swing.*;
+
+import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 
 import db.User;
 import twitter4j.*;
@@ -12,9 +20,13 @@ import ui.UserInterface;
 
 import java.awt.event.*;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.awt.*;
+import java.util.Properties;
 import java.util.concurrent.*;
+import java.util.Properties;
+
 
 public class ChatClient extends UserInterface implements SocketSetup {
     
@@ -40,6 +52,7 @@ public class ChatClient extends UserInterface implements SocketSetup {
     public ChatClient(User userDB) {
     	super();
     	super.createWindow(userDB);
+    	userDB.getDBConn().login(userDB.getUsername());
     	this.frame = super.frame;
     	this.tweet = super.tweet;
     	this.userDB = userDB;
@@ -111,7 +124,6 @@ public class ChatClient extends UserInterface implements SocketSetup {
             sentPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE, InetAddress.getLocalHost(), 4405);
         } catch(Exception e) { 
             System.out.println("ChatClient error: " + e);
-            return false;
         }
         
         sendMessage("<newUser>" +userDB.getUsername()+"</newUser>");		//new user joined
@@ -124,8 +136,26 @@ public class ChatClient extends UserInterface implements SocketSetup {
             	else
             	{
             		String user = userList.getSelectedItem().toString();
-                	sendMessage("<privateMessage>"+userDB.getUsername()+": "+outgoing.getText()+"</privateMessage><user>"+user+"</user><from>"+userDB.getUsername()+"</from>");
-                	to.setText("");
+            		if(userDB.getDBConn().isReachable(userDB.getUsername(),user)) {
+            			// okay the user is reachable, but is he or she online?
+            			if(userDB.getDBConn().isOnline(user))
+            			{
+            				sendMessage("<privateMessage>"+userDB.getUsername()+": "+outgoing.getText()+"</privateMessage><user>"+user+"</user><from>"+userDB.getUsername()+"</from>");
+            				to.setText("");
+            			}
+            			else {
+            				// mmm the user is not online, but dont worry you can send him an email
+            				String[] options = {"Yes","No thanks"};
+            				int option = JOptionPane.showOptionDialog(frame,"Would you like to send an Email?", user + " is offline :(", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,options,options[0] );
+            		        if(option == JOptionPane.YES_OPTION) {
+            		        	webservice.SendMail mail = new webservice.SendMail();
+								mail.sendEmail(userDB.getDBConn().getEmail(user),"Your friend " + user + " tried to contact you",outgoing.getText());
+            		        }
+            			}
+            		}
+            		else {
+            			JOptionPane.showMessageDialog(frame, "It appears that the user " + user + " have blocked you :(");
+            		}
             	}
             	outgoing.setText("");
             }
@@ -144,6 +174,7 @@ public class ChatClient extends UserInterface implements SocketSetup {
         quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 sendMessage("<quit>");
+                userDB.getDBConn().logout(userDB.getUsername());
                 ChatClient.this.finalize();
             }
         });
@@ -152,6 +183,7 @@ public class ChatClient extends UserInterface implements SocketSetup {
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 sendMessage("<quit>");
+                userDB.getDBConn().logout(userDB.getUsername());
                 ChatClient.this.finalize();
             }
         });
@@ -300,13 +332,18 @@ public class ChatClient extends UserInterface implements SocketSetup {
             e.printStackTrace();
         }
     }
+
     
     public void updateUserList() {
     	/*for(String str: this.userDB.getDBConn().getAllUsers(this.userDB.getUsername())) {
     		userList.addItem(str);
     	}*/
+    	userList.removeAllItems();
+    	userList.addItem("All Users");
     	for(String str: this.userDB.getDBConn().getUnblockedUsers(this.userDB.getUsername()))
+    	{
     		userList.addItem(str);
+    	}
     }
     
     

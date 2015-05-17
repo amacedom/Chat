@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Armando/SkyDrive/ITESO/Distribuidos/Proyecto/jdbc/mysql-connector-java-5.1.35/mysql-connector-java-5.1.35-bin.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Armando/Documents/GitHub/Chat/proyecto_integrador/twitter/lib/twitter4j-core-4.0.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Armando/Documents/GitHub/Chat/proyecto_integrador/Java mail/javax.mail-1.5.3.jar"/>
 	<classpathentry kind="output" path="proyecto_integrador/bin"/>
 </classpath>

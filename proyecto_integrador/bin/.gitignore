@@ -1,6 +1,3 @@
-/bin/
-/ui/
 /modules/
-/webservice/
 /db/
-/interfaces/
+/webservice/

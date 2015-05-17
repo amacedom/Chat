@@ -9,12 +9,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.JOptionPane;
-
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
-
 import ui.AuthInterface;
 
 public class MySQL {
@@ -26,7 +23,7 @@ public class MySQL {
 	String password;
 	Connection conn;
 	
-	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser,getAll,getBlocked,getBlockedString,blockUser,unblockUser;
+	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser,getAll,getBlocked,getBlockedString,blockUser,unblockUser,email,status;
 	
 	public MySQL(String hostname) {
 		this.url = "jdbc:mysql://"+ hostname + ":3306/"; 
@@ -37,6 +34,7 @@ public class MySQL {
 		this.conn = connectToMySQL();
 	}
 	
+	
 	public Connection connectToMySQL() {
 		try { 
 			Class.forName(driver).newInstance(); 
@@ -46,6 +44,23 @@ public class MySQL {
 		} 
 
 		return conn;
+	}
+	
+	public String getEmail(String username) {
+		String query = "select email from chat_users where username = ?";
+		String emailString = "";
+		try {
+			this.email = (PreparedStatement) conn.prepareStatement(query);
+			email.setString(1, username);
+			ResultSet rs = email.executeQuery();
+			while(rs.next()) {
+				emailString = rs.getString("email");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return emailString;
 	}
 	
 	public String[] getBlockedUsers(String username) {
@@ -78,17 +93,20 @@ public class MySQL {
 		
 		for(String str: allUsers) {
 			map.put(str, "unblocked");
+			System.out.println( "unblocked" + " " + str );
 		}
 		
 		for(String str: blockedUsers) {
 			if(map.containsKey(str)){
 				map.put(str, "blocked");
+				System.out.println( "blocked" + " " + str );
 			}
 		}
 		
 		for(Entry<String,String> entry: map.entrySet()){
 			if(entry.getValue().equals("unblocked")){
 				users.add(entry.getKey());
+				System.out.println(entry.getKey() +  " " +  entry.getValue());
 			}
 				
 		}
@@ -127,7 +145,8 @@ public class MySQL {
 	
 	public void blockUser(String username,String target) {
 		String query = "update chat_users set blocked_users = ? where username = ?";
-		String blocked = getBlockedUsersString(username) + target;
+		String blocked = getBlockedUsersString(username) + target + ",";
+		System.out.println("blocked users string " + blocked);
 		try {
 			this.blockUser = (PreparedStatement) conn.prepareStatement(query);
 			blockUser.setString(1, blocked);
@@ -141,6 +160,7 @@ public class MySQL {
 	
 	public void unblockUser(String username, String target) {
 		String query = "update chat_users set blocked_users = ? where username = ?";
+		target = target + ",";
 		Pattern p = Pattern.compile(target);
 		String blocked = getBlockedUsersString(username);
 		Matcher matcher = p.matcher(blocked);
@@ -179,6 +199,36 @@ public class MySQL {
 		}
 		
 		return users;
+	}
+	
+	public boolean isReachable(String currentUser,String target) {
+		boolean reachable = true;
+		String [] blockedUsers = getBlockedUsers(target);
+		for(String str: blockedUsers) {
+			if(str.equals(currentUser))
+				return false;
+		}
+		
+		return reachable;
+	}
+	
+	public boolean isOnline(String target) {
+		boolean online = false;
+		String query = "select status from chat_users where username = ?";
+		try {
+			this.status = (PreparedStatement) conn.prepareStatement(query);
+			status.setString(1, target);
+			ResultSet rs = status.executeQuery();
+			while(rs.next()) {
+				String userStatus = rs.getString("status");
+				if(userStatus.equals("online"))
+					return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return online;
 	}
 	
 	

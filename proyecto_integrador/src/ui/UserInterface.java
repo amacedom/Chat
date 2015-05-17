@@ -67,7 +67,6 @@ public class UserInterface extends JFrame implements Runnable {
 		this.frame.setLocation((dim.width/2)-250, (dim.height/2)-200);
 		this.frame.setResizable(false);
 
-		
 		// init the top part
 		this.top = new JPanel();
 		this.top.setPreferredSize(new Dimension(500,25));
@@ -81,7 +80,6 @@ public class UserInterface extends JFrame implements Runnable {
 		this.userList = new JComboBox(test);
 		this.top.add(userList);
 		this.top.add(Box.createRigidArea(new Dimension(10, 0)));
-	
 		
 		// init the middle part
 		this.mid = new JPanel();
@@ -126,11 +124,9 @@ public class UserInterface extends JFrame implements Runnable {
 		this.timeText = new JLabel("que pex");
 		this.updateTime = new Thread(this);
 		this.updateTime.start();
-		this.weather.add(Box.createRigidArea(new Dimension(100, 0)));
+		this.weather.add(Box.createRigidArea(new Dimension(50, 0)));
 		this.weather.add(timeText,BorderLayout.LINE_END);
 		this.weather.add(Box.createRigidArea(new Dimension(10, 0)));
-		
-		
 		
 		// init menu options
 		initMenu();
