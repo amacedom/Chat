@@ -21,6 +21,7 @@ import db.MySQL;
 import db.User;
 import ui.AuthInterface;
 import ui.RegisterInterface;
+import ui.SendFileUserInterface;
 import ui.UserInterface;
 
 import java.sql.*;
@@ -48,7 +49,8 @@ public class Driver extends JFrame {
 		MySQL mydb = new MySQL("45.55.251.74");
 		AuthInterface au = new AuthInterface(mydb);
 		//mydb.closeConn();
-		//User userDB = mydb.getUserData("armandm");
+		//User userDB = mydb.getUserData("cremon");
+		//SendFileUserInterface sf = new SendFileUserInterface(userDB,"armandm");
 		//new ManageUsersInterface(userDB,"block");
 		//init(userDB);
 	}

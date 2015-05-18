@@ -16,6 +16,7 @@ import twitter4j.*;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.ConfigurationBuilder;
+import ui.SendFileUserInterface;
 import ui.UserInterface;
 
 import java.awt.event.*;
@@ -30,7 +31,7 @@ import java.util.Properties;
 
 public class ChatClient extends UserInterface implements SocketSetup {
     
-    int PACKET_SIZE = 512;
+    int PACKET_SIZE = 10240;
     DatagramPacket receivedPacket;
     DatagramPacket sentPacket;
     DatagramSocket clientSocket;
@@ -177,6 +178,16 @@ public class ChatClient extends UserInterface implements SocketSetup {
                 userDB.getDBConn().logout(userDB.getUsername());
                 ChatClient.this.finalize();
             }
+        });
+        
+        sendFile.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				SendFileUserInterface sf = new SendFileUserInterface(userDB,userList.getSelectedItem().toString(),clientSocket);
+			}
+        	
         });
      
         

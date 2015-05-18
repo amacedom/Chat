@@ -23,7 +23,7 @@ public class MySQL {
 	String password;
 	Connection conn;
 	
-	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser,getAll,getBlocked,getBlockedString,blockUser,unblockUser,email,status;
+	PreparedStatement userExist,createUser,connect,disconn,passMatch,getUser,getAll,getBlocked,getBlockedString,blockUser,unblockUser,email,status,getOnline;
 	
 	public MySQL(String hostname) {
 		this.url = "jdbc:mysql://"+ hostname + ":3306/"; 
@@ -190,6 +190,25 @@ public class MySQL {
 			this.getAll = (PreparedStatement) conn.prepareStatement(query);
 			getAll.setString(1, username);
 			ResultSet rs = getAll.executeQuery();
+			while(rs.next()) {
+				users.add(rs.getString("username"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return users;
+	}
+	
+	public ArrayList<String> getOnlineUsers(String username) {
+		String query = "select username from chat_users where username != ? and status = 'online' order by username asc";
+		//String[] users = new String[50];
+		ArrayList<String> users = new ArrayList<String>();
+		try {
+			this.getOnline = (PreparedStatement) conn.prepareStatement(query);
+			getOnline.setString(1, username);
+			ResultSet rs = getOnline.executeQuery();
 			while(rs.next()) {
 				users.add(rs.getString("username"));
 			}

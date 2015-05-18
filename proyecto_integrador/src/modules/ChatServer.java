@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 
 public class ChatServer implements SocketSetup {
 
-    private static final int PACKET_SIZE = 512;
+    private static final int PACKET_SIZE = 10240;
     private List<Client> clients = new ArrayList<Client>();
     private volatile boolean running = true;
     private DatagramSocket serverSocket;
@@ -40,6 +40,15 @@ public class ChatServer implements SocketSetup {
         for(Client c: clients) { // who wants to quit?
             if(c.nick.equals(nick)) {
             	c.sendMessage(message);
+                break; // Can't continue iterating through collection once it has been modified
+            }                        
+        }
+    }
+    
+    public void sendFile(String message,String path,String text, String nick) {
+    	for(Client c: clients) { // who wants to quit?
+            if(c.nick.equals(nick)) {
+            	c.saveFile(message,path,text);
                 break; // Can't continue iterating through collection once it has been modified
             }                        
         }
@@ -123,6 +132,23 @@ public class ChatServer implements SocketSetup {
     		}
     		response+="</users>";
     		sendPrivateMessage(response,user);
+    	}
+    	else if(parts[0].equals("<file")){
+    		temp = parts[1].split("<");
+    		String text = temp[0];
+    		temp = parts[3].split("<");
+    		String path = temp[0];
+    		temp = parts[5].split("<");
+    		String user = temp[0];
+    		temp = parts[7].split("<");
+    		String from = temp[0];
+    		//System.out.println("texto: " + text);
+    		//System.out.println("path: " + path);
+    		//System.out.println("destinatario: " + user);
+    		//System.out.println("enviado por :" + from);
+    		sendPrivateMessage("You sent " + path + " to: " + user,from);
+    		sendFile("You received the file '" + path +" from: " + from,path,text,user);
+    		
     	}
     	else
     	{
