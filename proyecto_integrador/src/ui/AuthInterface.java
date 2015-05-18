@@ -98,7 +98,8 @@ public class AuthInterface extends JFrame {
 					User userDB = mydb.getUserData(user);
 					//mydb.closeConn();
 					frame.dispose();
-					new Driver().init(userDB);
+					//new Driver().init(userDB);
+					new Driver().initChat(userDB);
 				}
 				else {
 					JOptionPane.showMessageDialog(form, "Username or Password are incorrect","Error",JOptionPane.ERROR_MESSAGE);

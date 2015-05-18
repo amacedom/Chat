@@ -17,6 +17,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
 import modules.ChatClient;
+import modules.ChatServer;
 import db.MySQL;
 import db.User;
 import ui.AuthInterface;
@@ -53,6 +54,10 @@ public class Driver extends JFrame {
 		//SendFileUserInterface sf = new SendFileUserInterface(userDB,"armandm");
 		//new ManageUsersInterface(userDB,"block");
 		//init(userDB);
+	}
+	
+	public void initChat(User userDB){
+		ChatClient client = new ChatClient(userDB);
 	}
 	
 	public static void init(User userDB) {
@@ -105,6 +110,7 @@ public class Driver extends JFrame {
 		// depending on the selected option, do the following
 		switch(getSelectedOption()) {
 		case "server": System.out.println("Running server instance...");
+					   ChatServer server = new ChatServer(4405);
 					   frame.dispose();
 					   
 					   break;

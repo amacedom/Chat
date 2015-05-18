@@ -13,6 +13,7 @@ public class Client {
 	public String nick; // Client's chosen nickname
     public DatagramPacket clientPacket; // Client contact info
     public DatagramSocket serverSocket; // Server Socket
+    boolean IamServer;
    
 
     public void sendMessage(String message) {
@@ -58,6 +59,16 @@ public class Client {
         this.nick = nick;
         this.serverSocket = serverSocket;
         this.clientPacket = new DatagramPacket(new byte[packet_size], packet_size, dp.getAddress(), dp.getPort());
+        this.IamServer = false;
+    }
+    
+    public void setServer() {
+    	this.IamServer = true;
+    	
+    }
+    
+    public void removeServer() {
+    	this.IamServer = false;
     }
 
 }

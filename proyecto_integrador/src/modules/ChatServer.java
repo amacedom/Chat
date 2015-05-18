@@ -10,15 +10,19 @@ public class ChatServer implements SocketSetup {
 
     private static final int PACKET_SIZE = 10240;
     private List<Client> clients = new ArrayList<Client>();
-    private volatile boolean running = true;
+    private volatile boolean running = false;
     private DatagramSocket serverSocket;
     private DatagramPacket receivedPacket;
     private ExecutorService es = Executors.newFixedThreadPool(1);
     
     public ChatServer(int port) {       
-        try {
-            serverSocket = new DatagramSocket(port);
-            serverSocket.setSoTimeout(60000);
+    	try {
+        	if(!running)
+        	{
+	            serverSocket = new DatagramSocket(port);
+	            serverSocket.setSoTimeout(60000);      
+	            running = true;
+        	}
         }
         catch(Exception e) {
             System.out.println("Error: Can't open ChatServer socket"); return;
@@ -27,12 +31,13 @@ public class ChatServer implements SocketSetup {
         es.submit(new LogicThread());
     }
 
-    public static void main(String[]args)
-    {
-    	ChatServer c = new ChatServer(4405);
-    }
+    
     public void sendMessageToAll(String message) {
         for(Client c: clients) { c.sendMessage(message); }
+    }
+    
+    public void sendImAliveMessageToAll() {
+        for(Client c: clients) { c.sendMessage("alive"); }
     }
     
     public void sendPrivateMessage(String message,String nick)
@@ -57,6 +62,7 @@ public class ChatServer implements SocketSetup {
     // The background thread to implement the chat server's mainloop.
     private class LogicThread implements Runnable {
         public void run() {
+        	sendImAliveMessageToAll(); 	
             try {
                 while(running) {
                     // Wait for the next incoming datagram.
@@ -99,9 +105,15 @@ public class ChatServer implements SocketSetup {
     		String user = temp[0];
     		temp = parts[5].split("<");
     		String from = temp[0];
+    		if(message.equals("*server*")){
+    			sendPrivateMessage("I am the server",user);
+    			sendMessageToAll(from + " has become the new server");
+    		}
+    		else {
+    			sendPrivateMessage(message,user);
+        		sendPrivateMessage(message,from);
+    		}
     		
-    		sendPrivateMessage(message,user);
-    		sendPrivateMessage(message,from);
     	}
     	else if(parts[0].equals("<newUser")){
     		temp = parts[1].split("<");
@@ -116,7 +128,9 @@ public class ChatServer implements SocketSetup {
                 if(c.clientPacket.getAddress().equals(receivedPacket.getAddress()) &&
                    c.clientPacket.getPort() == receivedPacket.getPort()) {
                      sendMessageToAll(c.nick + " has left the conversation");
+                     running = false;
                      clients.remove(c);
+                     
                      break; // Can't continue iterating through collection once it has been modified
                 }                        
             }

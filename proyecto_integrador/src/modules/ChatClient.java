@@ -9,8 +9,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
-
 import db.User;
 import twitter4j.*;
 import twitter4j.auth.AccessToken;
@@ -24,6 +22,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.*;
 import java.util.Properties;
@@ -49,6 +48,10 @@ public class ChatClient extends UserInterface implements SocketSetup {
     JButton tweet;
     JComboBox userList;
     JMenuItem quit,refresh;
+    ChatServer server;
+    
+    public static int active;
+    boolean serverDown = false;
 	
     public ChatClient(User userDB) {
     	super();
@@ -118,16 +121,41 @@ public class ChatClient extends UserInterface implements SocketSetup {
 	public boolean setupSocket() {
 		// TODO Auto-generated method stub
     	// Next, the client itself.
+    	ArrayList<String> onlineusers = userDB.getDBConn().getOnlineUsers(userDB.getUsername());
+    	active = onlineusers.size();
         try {
-            clientSocket = new DatagramSocket();
-            clientSocket.setSoTimeout(1000);
-            receivedPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-            sentPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE, InetAddress.getLocalHost(), 4405);
+        	if(active == 0 ) {
+        		//this is the first 
+        		ChatServer server = new ChatServer(4405);
+        		System.out.println("User "+userDB.getUsername()+" taking server role...");
+        		clientSocket = new DatagramSocket();
+                clientSocket.setSoTimeout(1000);
+                receivedPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                sentPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE, InetAddress.getLocalHost(), 4405);
+        	}
+        	/*else if(serverDown == true){
+        		ChatServer server = new ChatServer(4405);
+        		System.out.println("User "+userDB.getUsername()+" taking server role...");
+        		clientSocket = new DatagramSocket();
+                clientSocket.setSoTimeout(1000);
+                receivedPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                sentPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE, InetAddress.getLocalHost(), 4405);
+        	}*/
+        	
+        	else {
+        		clientSocket = new DatagramSocket();
+                clientSocket.setSoTimeout(1000);
+                receivedPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                sentPacket = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE, InetAddress.getLocalHost(), 4405);
+        	//}
+        	}	
+        	sendMessage("<newUser>" +userDB.getUsername()+"</newUser>");		//new user joined
+                //sendMessage("<newUser>" +userDB.getUsername()+"</newUser>");
+        	
         } catch(Exception e) { 
             System.out.println("ChatClient error: " + e);
         }
         
-        sendMessage("<newUser>" +userDB.getUsername()+"</newUser>");		//new user joined
         
         outgoing.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -174,7 +202,14 @@ public class ChatClient extends UserInterface implements SocketSetup {
         
         quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                sendMessage("<quit>");
+            	/*if(server != null){
+            		System.out.println("i am leaving and selecting new user as server");
+                	ArrayList<String> online = userDB.getDBConn().getOnlineUsers(userDB.getUsername());
+                	System.out.println("new server " + online.get(0));
+                	sendMessage("<privateMessage>*server*</privateMessage><user>" + online.get(0) + "</user><from>" + userDB.getUsername() + "</from>");
+            	}*/
+            	sendMessage("<quit>");
+                
                 userDB.getDBConn().logout(userDB.getUsername());
                 ChatClient.this.finalize();
             }
@@ -193,7 +228,14 @@ public class ChatClient extends UserInterface implements SocketSetup {
         
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
-                sendMessage("<quit>");
+            	/*if(server != null){
+            		System.out.println("i am leaving and selecting new user as server");
+                	ArrayList<String> online = userDB.getDBConn().getOnlineUsers(userDB.getUsername());
+                	System.out.println("new server " + online.get(0));
+                	sendMessage("<privateMessage>*server*</privateMessage><user>" + online.get(0) + "</user><from>" + userDB.getUsername() + "</from>");
+            	}*/
+            	sendMessage("<quit>");
+                
                 userDB.getDBConn().logout(userDB.getUsername());
                 ChatClient.this.finalize();
             }
@@ -211,10 +253,11 @@ public class ChatClient extends UserInterface implements SocketSetup {
                             byte[] ba = receivedPacket.getData();
                             ba = java.util.Arrays.copyOfRange(ba, 0, receivedPacket.getLength());
                             String message = new String(ba);
-                            
                             readMessage(message);
+                            
                         }
-                        catch(SocketTimeoutException e) { /* No message this time */ }
+                        catch(SocketTimeoutException e) { /* No message this time */ 
+                        }
                     }
                 }
                 catch(IOException e) {
@@ -243,6 +286,21 @@ public class ChatClient extends UserInterface implements SocketSetup {
     }
     
     public void readMessage(String xml){
+    	/*if(xml.startsWith("<privateMessage")){
+    		System.out.println("it is a private message");
+    		String[] pieces = xml.split(">");
+    		String[] tem;
+    		if(pieces[0].equals("<privateMessage")){
+    			tem = pieces[1].split("<");
+    			String msg = tem[0];
+    			if(msg.equals("*server*")){
+    				serverDown = true;
+    				setupSocket();
+    			}
+    		}
+    	}
+    		*/
+    	
     	System.out.println(xml);
     	if(xml.startsWith("<users"))
     	{
@@ -261,11 +319,18 @@ public class ChatClient extends UserInterface implements SocketSetup {
     
     //shutdown client
     public void finalize() {
-        running = false;
+    	running = false;
         es.shutdownNow();
         frame.dispose();
         super.updateTime = null; //this kills the clock thread ;)
         userDB.getDBConn().closeConn();
+    }
+    
+    public void setServer() {
+    	System.out.println("i am leaving and selecting new user as server");
+    	ArrayList<String> online = userDB.getDBConn().getOnlineUsers(userDB.getUsername());
+    	System.out.println("new server " + online.get(0));
+    	sendMessage("<privateMessage>*server*</privateMessage><user>" + online.get(0) + "</user><from>" + userDB.getUsername() + "</from>");
     }
     
     public void setTwitterConf() throws MalformedURLException, TwitterException {
